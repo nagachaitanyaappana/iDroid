@@ -105,7 +105,7 @@ fun IosWidgetSection(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .weight(0.88f)
-                .height(116.dp)
+                .height(142.dp)
                 .clip(RoundedCornerShape(25.dp))
                 .background(Color(0xFF254D55).copy(alpha = 0.78f))
                 .border(1.dp, Color.White.copy(alpha = 0.18f), RoundedCornerShape(25.dp))
