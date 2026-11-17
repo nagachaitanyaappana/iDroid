@@ -71,7 +71,7 @@ fun IosWidgetSection(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .weight(1.12f)
-                .height(116.dp)
+                .height(142.dp)
                 .clip(RoundedCornerShape(25.dp))
                 .background(Color(0xFF18283E).copy(alpha = 0.66f))
                 .border(1.dp, Color.White.copy(alpha = 0.18f), RoundedCornerShape(25.dp))
@@ -93,9 +93,11 @@ fun IosWidgetSection(modifier: Modifier = Modifier) {
                 letterSpacing = (-1).sp
             )
             Text(
-                text = "Have a good day",
+                text = "CALENDAR",
                 color = Color.White.copy(alpha = 0.72f),
-                fontSize = 10.sp
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Medium,
+                letterSpacing = 0.8.sp
             )
         }
 
