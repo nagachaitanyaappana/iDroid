@@ -91,13 +91,16 @@ fun HomeScreen(
         selected
     }
 
+    // A layered, blurred-colour composition inspired by the depth of iOS wallpapers.
     val wallpaper = Brush.linearGradient(
         colors = listOf(
-            Color(0xFF071A35),
-            Color(0xFF172E5A),
-            Color(0xFF44366F),
-            Color(0xFF9A5475)
-        )
+            Color(0xFF101B3B),
+            Color(0xFF273D72),
+            Color(0xFF624B83),
+            Color(0xFFB66A83)
+        ),
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     )
 
     Box(
@@ -105,14 +108,37 @@ fun HomeScreen(
             .fillMaxSize()
             .background(wallpaper)
     ) {
-        // Soft light blooms create depth without needing a heavy wallpaper image.
+        // Layered colour blooms give the wallpaper a soft, photographic depth.
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.radialGradient(
-                        colors = listOf(Color(0xFF4B91B8).copy(alpha = 0.42f), Color.Transparent),
-                        radius = 760f
+                        colors = listOf(Color(0xFF79C9D2).copy(alpha = 0.58f), Color.Transparent),
+                        center = androidx.compose.ui.geometry.Offset(180f, 380f),
+                        radius = 850f
+                    )
+                )
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(Color(0xFFEF9BA8).copy(alpha = 0.58f), Color.Transparent),
+                        center = androidx.compose.ui.geometry.Offset(900f, 1500f),
+                        radius = 1050f
+                    )
+                )
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(Color(0xFF344C9A).copy(alpha = 0.48f), Color.Transparent),
+                        center = androidx.compose.ui.geometry.Offset(850f, 420f),
+                        radius = 900f
                     )
                 )
         )
@@ -163,7 +189,7 @@ fun HomeScreen(
                                         bottom = 14.dp
                                     ),
                                     horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                    verticalArrangement = Arrangement.spacedBy(17.dp),
+                                    verticalArrangement = Arrangement.spacedBy(15.dp),
                                     modifier = Modifier.fillMaxSize()
                                 ) {
                                     items(
