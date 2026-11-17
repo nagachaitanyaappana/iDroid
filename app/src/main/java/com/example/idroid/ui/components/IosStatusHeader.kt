@@ -44,18 +44,17 @@ fun IosStatusHeader(
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = getFormattedTime()
-            delay(1000L)
+            delay(1_000L)
         }
     }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(start = 27.dp, end = 22.dp, top = 7.dp, bottom = 5.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Left: Time
         Text(
             text = currentTime,
             color = Color.White,
@@ -63,30 +62,17 @@ fun IosStatusHeader(
             fontWeight = FontWeight.SemiBold
         )
 
-        // Right: iOS Signal, Wifi, Battery & Control Center Pill
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .clickable(onClick = onOpenControlCenter)
+                .padding(horizontal = 3.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IosSignalIcon()
             IosWifiIcon()
             IosBatteryIcon()
-
-            // Control Center Trigger Pill
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White.copy(alpha = 0.25f))
-                    .clickable { onOpenControlCenter() }
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "Control",
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
         }
     }
 }
@@ -98,12 +84,11 @@ private fun IosSignalIcon() {
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier.height(12.dp)
     ) {
-        val heights = listOf(4.dp, 6.dp, 9.dp, 12.dp)
-        heights.forEach { h ->
+        listOf(4.dp, 6.dp, 9.dp, 12.dp).forEach { barHeight ->
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(h)
+                    .height(barHeight)
                     .clip(RoundedCornerShape(1.dp))
                     .background(Color.White)
             )
@@ -113,14 +98,14 @@ private fun IosSignalIcon() {
 
 @Composable
 private fun IosWifiIcon() {
-    Canvas(modifier = Modifier.size(14.dp)) {
-        val stroke = 2.dp.toPx()
+    Canvas(modifier = Modifier.size(15.dp)) {
+        val stroke = 1.8.dp.toPx()
         drawArc(
             color = Color.White,
             startAngle = 220f,
             sweepAngle = 100f,
             useCenter = false,
-            topLeft = Offset(0f, 0f),
+            topLeft = Offset.Zero,
             size = Size(size.width, size.height),
             style = androidx.compose.ui.graphics.drawscope.Stroke(stroke)
         )
@@ -143,24 +128,21 @@ private fun IosWifiIcon() {
 
 @Composable
 private fun IosBatteryIcon() {
-    Canvas(modifier = Modifier.size(width = 22.dp, height = 11.dp)) {
+    Canvas(modifier = Modifier.size(width = 23.dp, height = 12.dp)) {
         val corner = 3.dp.toPx()
-        // Outer body
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.6f),
+            color = Color.White.copy(alpha = 0.72f),
             cornerRadius = CornerRadius(corner, corner),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.5.dp.toPx())
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.4.dp.toPx())
         )
-        // Inner level (80%)
         drawRoundRect(
             color = Color.White,
             topLeft = Offset(2.dp.toPx(), 2.dp.toPx()),
-            size = Size((size.width - 6.dp.toPx()) * 0.8f, size.height - 4.dp.toPx()),
+            size = Size((size.width - 6.dp.toPx()) * 0.82f, size.height - 4.dp.toPx()),
             cornerRadius = CornerRadius(2.dp.toPx(), 2.dp.toPx())
         )
-        // Cap
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.6f),
+            color = Color.White.copy(alpha = 0.72f),
             topLeft = Offset(size.width - 1.5.dp.toPx(), size.height * 0.3f),
             size = Size(1.5.dp.toPx(), size.height * 0.4f),
             cornerRadius = CornerRadius(1.dp.toPx(), 1.dp.toPx())
@@ -168,7 +150,5 @@ private fun IosBatteryIcon() {
     }
 }
 
-private fun getFormattedTime(): String {
-    val sdf = SimpleDateFormat("h:mm", Locale.getDefault())
-    return sdf.format(Date())
-}
+private fun getFormattedTime(): String =
+    SimpleDateFormat("h:mm", Locale.getDefault()).format(Date())
