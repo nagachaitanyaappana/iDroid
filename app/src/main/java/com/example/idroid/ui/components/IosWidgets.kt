@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,9 +40,11 @@ fun IosWidgetSection(modifier: Modifier = Modifier) {
     val batteryManager = remember {
         context.getSystemService(BatteryManager::class.java)
     }
-    val batteryLevel = remember {
-        batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            ?.takeIf { it in 0..100 } ?: -1
+    var batteryLevel by remember {
+        mutableIntStateOf(
+            batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+                ?.takeIf { it in 0..100 } ?: -1
+        )
     }
 
     var currentTime by remember { mutableStateOf(formatTime()) }
@@ -51,6 +54,9 @@ fun IosWidgetSection(modifier: Modifier = Modifier) {
         while (true) {
             currentTime = formatTime()
             currentDate = formatDate()
+            batteryLevel = batteryManager
+                ?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+                ?.takeIf { it in 0..100 } ?: -1
             delay(30_000L)
         }
     }
