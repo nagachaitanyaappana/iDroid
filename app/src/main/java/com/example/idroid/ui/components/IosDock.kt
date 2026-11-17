@@ -26,21 +26,21 @@ fun IosDock(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
             .shadow(
-                elevation = 12.dp,
-                shape = RoundedCornerShape(36.dp),
-                ambientColor = Color.Black.copy(alpha = 0.4f),
-                spotColor = Color.Black.copy(alpha = 0.6f)
+                elevation = 16.dp,
+                shape = RoundedCornerShape(30.dp),
+                ambientColor = Color.Black.copy(alpha = 0.22f),
+                spotColor = Color.Black.copy(alpha = 0.3f)
             )
-            .clip(RoundedCornerShape(36.dp))
-            .background(Color.White.copy(alpha = 0.24f))
+            .clip(RoundedCornerShape(30.dp))
+            .background(Color.White.copy(alpha = 0.23f))
             .border(
                 width = 1.dp,
-                color = Color.White.copy(alpha = 0.45f),
-                shape = RoundedCornerShape(36.dp)
+                color = Color.White.copy(alpha = 0.24f),
+                shape = RoundedCornerShape(30.dp)
             )
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = 13.dp, vertical = 11.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -54,7 +54,7 @@ fun IosDock(
                     icon = app.icon,
                     onClick = { onAppClick(app) },
                     showLabel = false,
-                    iconSize = 58.dp
+                    iconSize = 54.dp
                 )
             }
         }
