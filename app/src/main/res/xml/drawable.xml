@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <category title="iOS 18 Icons">
+        <item drawable="ic_ios_phone" />
+        <item drawable="ic_ios_messages" />
+        <item drawable="ic_ios_camera" />
+        <item drawable="ic_ios_settings" />
+        <item drawable="ic_ios_safari" />
+        <item drawable="ic_ios_maps" />
+        <item drawable="ic_ios_photos" />
+        <item drawable="ic_ios_calculator" />
+        <item drawable="ic_ios_clock" />
+    </category>
+</resources>

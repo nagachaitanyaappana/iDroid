@@ -35,6 +35,18 @@
                 android:value="iOS Floating Theme Overlay" />
         </service>
 
+        <!-- iOS System Gesture & Lock Screen Integration Service -->
+        <service
+            android:name=".service.IosSystemGestureService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            tools:ignore="ForegroundServicePermission">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="iOS System Gestures" />
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

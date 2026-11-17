@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -40,11 +41,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.idroid.model.AppInfo
+import com.example.idroid.ui.components.DynamicIsland
 import com.example.idroid.ui.components.IosAppIcon
+import com.example.idroid.ui.components.IosAppLibrary
 import com.example.idroid.ui.components.IosControlCenter
 import com.example.idroid.ui.components.IosDock
+import com.example.idroid.ui.components.IosLockScreen
 import com.example.idroid.ui.components.IosStatusHeader
 import com.example.idroid.ui.components.IosWidgetSection
+import com.example.idroid.ui.components.SpotlightSearch
 import com.example.idroid.viewmodel.LauncherViewModel
 
 @Composable
@@ -56,6 +61,9 @@ fun HomeScreen(
     val installedApps by viewModel.installedApps.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isControlCenterOpen by viewModel.isControlCenterOpen.collectAsState()
+
+    var isLocked by remember { mutableStateOf(false) }
+    var isSpotlightOpen by remember { mutableStateOf(false) }
     var showThemeSettings by remember { mutableStateOf(false) }
 
     if (showThemeSettings) {
@@ -83,18 +91,31 @@ fun HomeScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // iOS Status Header
-            IosStatusHeader(
-                onOpenControlCenter = { viewModel.toggleControlCenter(true) }
-            )
+            // iOS Status Bar & Dynamic Island Header
+            Column {
+                IosStatusHeader(
+                    onOpenControlCenter = { viewModel.toggleControlCenter(true) }
+                )
+                DynamicIsland()
+            }
 
-            // Theme Settings Trigger Pill
+            // Quick Theme & Lock triggers
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(horizontal = 24.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White.copy(alpha = 0.25f))
+                        .clickable { isLocked = true }
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Text("🔒 Lock Screen", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
@@ -102,19 +123,9 @@ fun HomeScreen(
                         .clickable { showThemeSettings = true }
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
-                    Text(
-                        text = "⚙️ Theme Options",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Text("⚙️ Theme Options", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
-
-            // iOS Widgets
-            IosWidgetSection()
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             if (isLoading) {
                 Box(
@@ -128,7 +139,8 @@ fun HomeScreen(
             } else {
                 val appsPerPage = 16
                 val pages = installedApps.chunked(appsPerPage)
-                val pageCount = if (pages.isEmpty()) 1 else pages.size
+                // App pages + 1 App Library Page
+                val pageCount = (if (pages.isEmpty()) 1 else pages.size) + 1
                 val pagerState = rememberPagerState(pageCount = { pageCount })
 
                 Column(
@@ -138,46 +150,73 @@ fun HomeScreen(
                         state = pagerState,
                         modifier = Modifier.weight(1f)
                     ) { page ->
-                        val pageApps = pages.getOrNull(page) ?: emptyList()
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(4),
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(pageApps) { app ->
-                                IosAppIcon(
-                                    label = app.label,
-                                    icon = app.icon,
-                                    onClick = { launchApp(context, app) }
-                                )
+                        if (page == pageCount - 1) {
+                            // Final Page: iOS App Library
+                            IosAppLibrary(
+                                apps = installedApps,
+                                onAppClick = { app -> launchApp(context, app) }
+                            )
+                        } else {
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                if (page == 0) {
+                                    // First Page shows iOS Widgets
+                                    IosWidgetSection()
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+
+                                val pageApps = pages.getOrNull(page) ?: emptyList()
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(4),
+                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    items(pageApps) { app ->
+                                        IosAppIcon(
+                                            label = app.label,
+                                            icon = app.icon,
+                                            onClick = { launchApp(context, app) }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
 
-                    // Pager Indicator Dots
-                    if (pageCount > 1) {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            repeat(pageCount) { index ->
-                                val color = if (pagerState.currentPage == index) {
-                                    Color.White
-                                } else {
-                                    Color.White.copy(alpha = 0.35f)
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .padding(horizontal = 4.dp)
-                                        .size(7.dp)
-                                        .clip(CircleShape)
-                                        .background(color)
-                                )
+                    // Pager Indicator & Spotlight Search Button
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        repeat(pageCount) { index ->
+                            val color = if (pagerState.currentPage == index) {
+                                Color.White
+                            } else {
+                                Color.White.copy(alpha = 0.35f)
                             }
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .size(7.dp)
+                                    .clip(CircleShape)
+                                    .background(color)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color.White.copy(alpha = 0.25f))
+                                .clickable { isSpotlightOpen = true }
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Text("🔍 Search", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -190,10 +229,24 @@ fun HomeScreen(
             )
         }
 
+        // Spotlight Search Sheet
+        SpotlightSearch(
+            isOpen = isSpotlightOpen,
+            apps = installedApps,
+            onAppClick = { app -> launchApp(context, app) },
+            onClose = { isSpotlightOpen = false }
+        )
+
         // Control Center Overlay
         IosControlCenter(
             isOpen = isControlCenterOpen,
             onClose = { viewModel.toggleControlCenter(false) }
+        )
+
+        // iOS Lock Screen
+        IosLockScreen(
+            isLocked = isLocked,
+            onUnlock = { isLocked = false }
         )
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- System Phone -->
+    <item component="ComponentInfo{com.google.android.dialer/com.google.android.dialer.extensions.GoogleDialtactsActivity}" drawable="ic_ios_phone" />
+    <item component="ComponentInfo{com.oneplus.dialer/com.oneplus.dialer.MainActivity}" drawable="ic_ios_phone" />
+    <item component="ComponentInfo{com.android.dialer/com.android.dialer.main.impl.MainActivity}" drawable="ic_ios_phone" />
+
+    <!-- System Messages -->
+    <item component="ComponentInfo{com.google.android.apps.messaging/com.google.android.apps.messaging.ui.ConversationListActivity}" drawable="ic_ios_messages" />
+    <item component="ComponentInfo{com.oneplus.mms/com.oneplus.mms.ui.ConversationListActivity}" drawable="ic_ios_messages" />
+
+    <!-- System Camera -->
+    <item component="ComponentInfo{com.oneplus.camera/com.oneplus.camera.CameraActivity}" drawable="ic_ios_camera" />
+    <item component="ComponentInfo{com.oppo.camera/com.oppo.camera.Camera}" drawable="ic_ios_camera" />
+    <item component="ComponentInfo{com.google.android.camera/com.android.camera.CameraLauncher}" drawable="ic_ios_camera" />
+
+    <!-- System Settings -->
+    <item component="ComponentInfo{com.android.settings/com.android.settings.Settings}" drawable="ic_ios_settings" />
+
+    <!-- Browser -->
+    <item component="ComponentInfo{com.android.chrome/com.google.android.apps.chrome.Main}" drawable="ic_ios_safari" />
+
+    <!-- Maps -->
+    <item component="ComponentInfo{com.google.android.apps.maps/com.google.android.maps.MapsActivity}" drawable="ic_ios_maps" />
+
+    <!-- Photos / Gallery -->
+    <item component="ComponentInfo{com.coloros.gallery3d/com.coloros.gallery3d.app.MainActivity}" drawable="ic_ios_photos" />
+    <item component="ComponentInfo{com.oneplus.gallery/com.oneplus.gallery.GalleryActivity}" drawable="ic_ios_photos" />
+    <item component="ComponentInfo{com.google.android.apps.photos/com.google.android.apps.photos.home.HomeActivity}" drawable="ic_ios_photos" />
+
+    <!-- Calculator -->
+    <item component="ComponentInfo{com.oneplus.calculator/com.oneplus.calculator.Calculator}" drawable="ic_ios_calculator" />
+    <item component="ComponentInfo{com.google.android.calculator/com.android.calculator2.Calculator}" drawable="ic_ios_calculator" />
+
+    <!-- Clock -->
+    <item component="ComponentInfo{com.oneplus.deskclock/com.oneplus.deskclock.DeskClock}" drawable="ic_ios_clock" />
+    <item component="ComponentInfo{com.google.android.deskclock/com.android.deskclock.DeskClock}" drawable="ic_ios_clock" />
+</resources>

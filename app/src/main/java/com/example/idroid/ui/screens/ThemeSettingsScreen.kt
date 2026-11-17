@@ -38,7 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.idroid.service.IosOverlayService
+import com.example.idroid.service.IosSystemGestureService
 import com.example.idroid.util.IosWallpaperManager
 
 @Composable
@@ -47,9 +47,7 @@ fun ThemeSettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var isOverlayEnabled by remember {
-        mutableStateOf(Settings.canDrawOverlays(context))
-    }
+    var isSystemGestureEnabled by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -65,9 +63,9 @@ fun ThemeSettingsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "iOS Theme Settings",
+                text = "iOS 18 System Integration",
                 color = Color.White,
-                fontSize = 24.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
 
@@ -79,7 +77,7 @@ fun ThemeSettingsScreen(
                     .padding(horizontal = 14.dp, vertical = 6.dp)
             ) {
                 Text(
-                    text = "Home",
+                    text = "Done",
                     color = Color.White,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold
@@ -89,8 +87,8 @@ fun ThemeSettingsScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Section 1: System-wide Floating Control Center Overlay
-        ThemeSectionCard(title = "System-wide Floating Overlay") {
+        // Section 1: Replace ColorOS Lock Screen & Control Center
+        ThemeSectionCard(title = "Unified iOS Lock & Control Center") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -98,14 +96,14 @@ fun ThemeSettingsScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Floating iOS Control Center",
+                        text = "Intercept Top Swipe & Lock Screen",
                         color = Color.White,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Shows the iOS Control Center overlay over ALL existing apps on your phone.",
+                        text = "Prevents ColorOS/iDroid clash. Top swipe opens ONLY iOS Control Center, Screen On shows ONLY iOS Lock Screen.",
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 12.sp
                     )
@@ -114,7 +112,7 @@ fun ThemeSettingsScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Switch(
-                    checked = isOverlayEnabled,
+                    checked = isSystemGestureEnabled,
                     onCheckedChange = { checked ->
                         if (checked) {
                             if (!Settings.canDrawOverlays(context)) {
@@ -129,14 +127,14 @@ fun ThemeSettingsScreen(
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
-                                IosOverlayService.start(context)
-                                isOverlayEnabled = true
-                                Toast.makeText(context, "iOS Floating Overlay Enabled", Toast.LENGTH_SHORT).show()
+                                IosSystemGestureService.start(context)
+                                isSystemGestureEnabled = true
+                                Toast.makeText(context, "iOS System Gestures & Lock Active", Toast.LENGTH_SHORT).show()
                             }
                         } else {
-                            IosOverlayService.stop(context)
-                            isOverlayEnabled = false
-                            Toast.makeText(context, "iOS Floating Overlay Disabled", Toast.LENGTH_SHORT).show()
+                            IosSystemGestureService.stop(context)
+                            isSystemGestureEnabled = false
+                            Toast.makeText(context, "iOS System Gestures Disabled", Toast.LENGTH_SHORT).show()
                         }
                     },
                     colors = SwitchDefaults.colors(
@@ -149,7 +147,50 @@ fun ThemeSettingsScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Section 2: Set Phone Wallpapers (Lock & Home Screen)
+        // Section 2: OxygenOS / ColorOS Icon Engine Application
+        ThemeSectionCard(title = "OxygenOS / ColorOS Icon Theme") {
+            Column {
+                Text(
+                    text = "Apply iOS continuous squircles and vector icons inside OxygenOS/ColorOS System Settings:",
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 12.sp
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color(0xFF34C759))
+                        .clickable {
+                            try {
+                                val intent = Intent("android.settings.PERSONALIZATION_SETTINGS")
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                try {
+                                    val intent = Intent(Settings.ACTION_DISPLAY_SETTINGS)
+                                    context.startActivity(intent)
+                                } catch (ex: Exception) {
+                                    Toast.makeText(context, "Open Settings -> Personalization -> Icons", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                        .padding(14.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Open System Icon Customizer",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Section 3: Set Phone Wallpapers (Lock & Home Screen)
         ThemeSectionCard(title = "iOS Stock Wallpapers") {
             Column {
                 Text(
@@ -205,45 +246,6 @@ fun ThemeSettingsScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Section 3: Default Home App Setting
-        ThemeSectionCard(title = "Default Home Screen App") {
-            Column {
-                Text(
-                    text = "Set iDroid as your default Home Screen app, or switch back to your phone's original launcher anytime.",
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF007AFF))
-                        .clickable {
-                            try {
-                                val intent = Intent(Settings.ACTION_HOME_SETTINGS)
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                val intent = Intent(Settings.ACTION_SETTINGS)
-                                context.startActivity(intent)
-                            }
-                        }
-                        .padding(14.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Open Default Apps Settings",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
                 }
             }
         }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- OxygenOS / ColorOS Icon Engine Squircle Mask Config -->
+    <iconback img1="ios_icon_bg" />
+    <iconmask img1="ios_icon_mask" />
+    <iconupon img1="ios_icon_overlay" />
+    <scale factor="0.75" />
+</resources>

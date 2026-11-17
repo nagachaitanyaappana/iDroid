@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.idroid.model.AppInfo
@@ -25,15 +26,21 @@ fun IosDock(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(32.dp))
-            .background(Color.White.copy(alpha = 0.28f))
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(36.dp),
+                ambientColor = Color.Black.copy(alpha = 0.4f),
+                spotColor = Color.Black.copy(alpha = 0.6f)
+            )
+            .clip(RoundedCornerShape(36.dp))
+            .background(Color.White.copy(alpha = 0.24f))
             .border(
                 width = 1.dp,
-                color = Color.White.copy(alpha = 0.4f),
-                shape = RoundedCornerShape(32.dp)
+                color = Color.White.copy(alpha = 0.45f),
+                shape = RoundedCornerShape(36.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 20.dp, vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -47,7 +54,7 @@ fun IosDock(
                     icon = app.icon,
                     onClick = { onAppClick(app) },
                     showLabel = false,
-                    iconSize = 56.dp
+                    iconSize = 58.dp
                 )
             }
         }
