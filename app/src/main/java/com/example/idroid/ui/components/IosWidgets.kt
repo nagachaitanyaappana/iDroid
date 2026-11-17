@@ -1,5 +1,6 @@
 package com.example.idroid.ui.components
 
+import android.os.BatteryManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -14,126 +15,119 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun IosWidgetSection(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val batteryManager = remember {
+        context.getSystemService(BatteryManager::class.java)
+    }
+    val batteryLevel = remember {
+        batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+            ?.takeIf { it in 0..100 } ?: -1
+    }
+
+    var currentTime by remember { mutableStateOf(formatTime()) }
+    var currentDate by remember { mutableStateOf(formatDate()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime = formatTime()
+            currentDate = formatDate()
+            delay(30_000L)
+        }
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = 18.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Left Widget: Clock & Date
-        ClockWidget(modifier = Modifier.weight(1f))
-
-        // Right Widget: Weather & Battery
-        WeatherWidget(modifier = Modifier.weight(1f))
-    }
-}
-
-@Composable
-private fun ClockWidget(modifier: Modifier = Modifier) {
-    val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
-    val dateFormat = SimpleDateFormat("MMMM d", Locale.getDefault())
-    val now = Date()
-
-    Box(
-        modifier = modifier
-            .height(140.dp)
-            .clip(RoundedCornerShape(28.dp))
-            .background(Color.White.copy(alpha = 0.25f))
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.35f),
-                shape = RoundedCornerShape(28.dp)
-            )
-            .padding(16.dp)
-    ) {
+        // iOS-style clock and calendar widget
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .weight(1.12f)
+                .height(116.dp)
+                .clip(RoundedCornerShape(25.dp))
+                .background(Color(0xFF18283E).copy(alpha = 0.66f))
+                .border(1.dp, Color.White.copy(alpha = 0.18f), RoundedCornerShape(25.dp))
+                .padding(14.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = dayFormat.format(now).uppercase(),
-                color = Color(0xFFFF3B30),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
+                text = currentDate.uppercase(Locale.getDefault()),
+                color = Color(0xFFFF6B72),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
             )
-
             Text(
-                text = dateFormat.format(now),
+                text = currentTime,
                 color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Light,
+                letterSpacing = (-1).sp
             )
-
             Text(
-                text = "iDroid iOS Theme",
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 11.sp
+                text = "Have a good day",
+                color = Color.White.copy(alpha = 0.72f),
+                fontSize = 10.sp
             )
         }
-    }
-}
 
-@Composable
-private fun WeatherWidget(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .height(140.dp)
-            .clip(RoundedCornerShape(28.dp))
-            .background(Color(0xFF2C5282).copy(alpha = 0.85f))
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(28.dp)
-            )
-            .padding(16.dp)
-    ) {
+        // Live battery widget (not a made-up weather reading)
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .weight(0.88f)
+                .height(116.dp)
+                .clip(RoundedCornerShape(25.dp))
+                .background(Color(0xFF254D55).copy(alpha = 0.78f))
+                .border(1.dp, Color.White.copy(alpha = 0.18f), RoundedCornerShape(25.dp))
+                .padding(14.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Cupertino",
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "72°",
-                    color = Color.White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
             Text(
-                text = "Sunny",
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium
+                text = "BATTERIES",
+                color = Color.White.copy(alpha = 0.72f),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
             )
-
             Text(
-                text = "H:78°  L:55°",
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 11.sp
+                text = if (batteryLevel >= 0) "$batteryLevel%" else "—",
+                color = Color.White,
+                fontSize = 31.sp,
+                fontWeight = FontWeight.Light
+            )
+            Text(
+                text = "This device",
+                color = Color.White.copy(alpha = 0.72f),
+                fontSize = 10.sp
             )
         }
     }
 }
+
+private fun formatTime(): String =
+    SimpleDateFormat("h:mm", Locale.getDefault()).format(Date())
+
+private fun formatDate(): String =
+    SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(Date())
